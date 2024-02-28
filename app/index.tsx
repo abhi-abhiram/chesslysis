@@ -12,7 +12,8 @@ import { Header } from '../components/Header';
 import CameraIcon from '../SVG/CameraIcon';
 import GalleryIcon from '../SVG/GalleryIcon';
 import { useRouter } from 'expo-router';
-import { hello } from '../modules/ml-module';
+import { details, predict } from '../modules/ml-module';
+import * as React from 'react';
 
 const Home = () => {
   const router = useRouter();
@@ -22,7 +23,6 @@ const Home = () => {
       <SafeAreaView style={styles.container}>
         <StatusBar style='light' />
         <Header />
-        <Hello />
         <View style={{ flex: 1, alignItems: 'center' }}>
           <View style={{ top: 110 }}>
             <Text
@@ -34,7 +34,7 @@ const Home = () => {
                 textAlign: 'center',
               }}
             >
-              Scan and analyze chess positions
+              {predict({ test: 1 })}
             </Text>
             <Text
               style={{
@@ -85,14 +85,6 @@ const Home = () => {
           </View>
         </View>
       </SafeAreaView>
-    </View>
-  );
-};
-
-const Hello = () => {
-  return (
-    <View>
-      <Text>{hello()}</Text>
     </View>
   );
 };
