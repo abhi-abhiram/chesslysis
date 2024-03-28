@@ -10,8 +10,8 @@ export function details(): string {
   return MlModule.details();
 }
 
-export function predict(test: { test: number }) {
-  return MlModule.predict(test);
+export async function predict(image: string): Promise<string> {
+  return await MlModule.predict(image);
 }
 
 export { MlModuleViewProps, ChangeEventPayload };

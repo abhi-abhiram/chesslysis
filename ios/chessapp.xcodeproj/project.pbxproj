@@ -15,7 +15,8 @@
 		96905EF65AED1B983A6B3ABC /* libPods-chessapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-chessapp.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		E0BDFE5D2B8EDB6000774815 /* ChesspiecesDet.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = E0BDFE5C2B8EDB6000774815 /* ChesspiecesDet.mlpackage */; };
+		E01558672BAEEBAD00B21C22 /* ChesspiecesModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = E01558662BAEEBAD00B21C22 /* ChesspiecesModel.mlpackage */; };
+		E04C99702BB0360A006B91C9 /* ChesssegModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = E04C996F2BB0360A006B91C9 /* ChesssegModel.mlpackage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,7 +33,8 @@
 		7A4D352CD337FB3A3BF06240 /* Pods-chessapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chessapp.release.xcconfig"; path = "Target Support Files/Pods-chessapp/Pods-chessapp.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = chessapp/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		E0BDFE5C2B8EDB6000774815 /* ChesspiecesDet.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = ChesspiecesDet.mlpackage; sourceTree = "<group>"; };
+		E01558662BAEEBAD00B21C22 /* ChesspiecesModel.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = ChesspiecesModel.mlpackage; sourceTree = "<group>"; };
+		E04C996F2BB0360A006B91C9 /* ChesssegModel.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = ChesssegModel.mlpackage; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-chessapp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -52,7 +54,8 @@
 		13B07FAE1A68108700A75B9A /* chessapp */ = {
 			isa = PBXGroup;
 			children = (
-				E0BDFE5C2B8EDB6000774815 /* ChesspiecesDet.mlpackage */,
+				E04C996F2BB0360A006B91C9 /* ChesssegModel.mlpackage */,
+				E01558662BAEEBAD00B21C22 /* ChesspiecesModel.mlpackage */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -329,11 +332,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E0BDFE5D2B8EDB6000774815 /* ChesspiecesDet.mlpackage in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
 				6CB17B809B7646D1AA7AAB32 /* noop-file.swift in Sources */,
+				E04C99702BB0360A006B91C9 /* ChesssegModel.mlpackage in Sources */,
+				E01558672BAEEBAD00B21C22 /* ChesspiecesModel.mlpackage in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,7 +358,7 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = chessapp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -385,7 +389,7 @@
 				CODE_SIGN_ENTITLEMENTS = chessapp/chessapp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = chessapp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -455,7 +459,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -520,7 +524,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",

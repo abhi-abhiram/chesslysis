@@ -2,9 +2,9 @@ import {
   StyleSheet,
   Text,
   View,
-  Pressable,
   Platform,
   StatusBar as StatusBarRN,
+  Image,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native';
@@ -12,11 +12,38 @@ import { Header } from '../components/Header';
 import CameraIcon from '../SVG/CameraIcon';
 import GalleryIcon from '../SVG/GalleryIcon';
 import { useRouter } from 'expo-router';
-import { details, predict } from '../modules/ml-module';
 import * as React from 'react';
+import Button from './components/Button';
+import * as ImagePicker from 'expo-image-picker';
+import { useState } from 'react';
+import { predict } from '../modules/ml-module';
 
 const Home = () => {
   const router = useRouter();
+  const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
+  const [result, setResult] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (!image) return;
+    predict(image.uri)
+      .then((value) => {
+        console.log(value);
+        setResult(value);
+      })
+      .catch((error) => console.log(error));
+  }, [image]);
+
+  const pickImageAsync = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0]);
+    } else {
+      setImage(null);
+    }
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: 'black' }}>
@@ -24,65 +51,86 @@ const Home = () => {
         <StatusBar style='light' />
         <Header />
         <View style={{ flex: 1, alignItems: 'center' }}>
-          <View style={{ top: 110 }}>
-            <Text
-              style={{
-                color: '#fff',
-                fontSize: 24,
-                fontWeight: '500',
-                width: 318,
-                textAlign: 'center',
-              }}
-            >
-              {predict({ test: 1 })}
-            </Text>
-            <Text
-              style={{
-                color: '#fff',
-                textAlign: 'center',
-                fontWeight: '400',
-                fontSize: 11,
-                top: 10,
-              }}
-            >
-              from prints and 2d sources
-            </Text>
-          </View>
-          <View
-            style={{ top: 300, width: 224, flexDirection: 'column', gap: 23 }}
-          >
-            <Pressable
-              style={styles.button}
-              onPress={() => {
-                router.push('/camera');
-              }}
-            >
-              <CameraIcon />
-              <Text
+          {!result ? (
+            <>
+              <View style={{ top: 110 }}>
+                <Text
+                  style={{
+                    color: '#fff',
+                    fontSize: 24,
+                    fontWeight: '500',
+                    width: 318,
+                    textAlign: 'center',
+                  }}
+                >
+                  Scan and analyze chess positions
+                </Text>
+                <Text
+                  style={{
+                    color: '#fff',
+                    textAlign: 'center',
+                    fontWeight: '400',
+                    fontSize: 11,
+                    top: 10,
+                  }}
+                >
+                  from prints and 2d sources
+                </Text>
+              </View>
+              <View
                 style={{
-                  color: '#161A30',
-                  fontSize: 14,
-                  fontWeight: '700',
-                  textAlign: 'center',
+                  top: 300,
+                  width: 224,
+                  flexDirection: 'column',
+                  gap: 23,
                 }}
               >
-                Take a picture
-              </Text>
-            </Pressable>
-            <Pressable style={styles.button}>
-              <GalleryIcon />
-              <Text
-                style={{
-                  color: '#161A30',
-                  fontSize: 14,
-                  fontWeight: '700',
-                  textAlign: 'center',
-                }}
-              >
-                Image from gallery
-              </Text>
-            </Pressable>
-          </View>
+                <Button
+                  style={styles.button}
+                  onPress={() => {
+                    router.push('/camera');
+                  }}
+                >
+                  <CameraIcon />
+                  <Text
+                    style={{
+                      color: '#161A30',
+                      fontSize: 14,
+                      fontWeight: '700',
+                      textAlign: 'center',
+                    }}
+                  >
+                    Take a picture
+                  </Text>
+                </Button>
+                <Button onPress={pickImageAsync}>
+                  <GalleryIcon />
+                  <Text
+                    style={{
+                      color: '#161A30',
+                      fontSize: 14,
+                      fontWeight: '700',
+                      textAlign: 'center',
+                    }}
+                  >
+                    Image from gallery
+                  </Text>
+                </Button>
+              </View>
+            </>
+          ) : (
+            <Image
+              source={{
+                uri: result,
+              }}
+              style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: 10,
+                top: 100,
+              }}
+            />
+          )}
         </View>
       </SafeAreaView>
     </View>
