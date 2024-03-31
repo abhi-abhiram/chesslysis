@@ -11,12 +11,11 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		6CB17B809B7646D1AA7AAB32 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7D04ED035B4732AF2C3CF4 /* noop-file.swift */; };
+		3F6F4E811B994EA0A6E0A2BA /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76200993B6E4470B88215B3D /* noop-file.swift */; };
 		96905EF65AED1B983A6B3ABC /* libPods-chessapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-chessapp.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		E01558672BAEEBAD00B21C22 /* ChesspiecesModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = E01558662BAEEBAD00B21C22 /* ChesspiecesModel.mlpackage */; };
-		E04C99702BB0360A006B91C9 /* ChesssegModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = E04C996F2BB0360A006B91C9 /* ChesssegModel.mlpackage */; };
+		E0361C322BB98A8B00214BEC /* ChesssegModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = E0361C312BB98A8B00214BEC /* ChesssegModel.mlpackage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,15 +25,14 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = chessapp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = chessapp/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = chessapp/main.m; sourceTree = "<group>"; };
-		2E7D04ED035B4732AF2C3CF4 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "chessapp/noop-file.swift"; sourceTree = "<group>"; };
-		4601C147C3974EDF88FF534F /* chessapp-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "chessapp-Bridging-Header.h"; path = "chessapp/chessapp-Bridging-Header.h"; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-chessapp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-chessapp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-chessapp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chessapp.debug.xcconfig"; path = "Target Support Files/Pods-chessapp/Pods-chessapp.debug.xcconfig"; sourceTree = "<group>"; };
+		76200993B6E4470B88215B3D /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "chessapp/noop-file.swift"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-chessapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chessapp.release.xcconfig"; path = "Target Support Files/Pods-chessapp/Pods-chessapp.release.xcconfig"; sourceTree = "<group>"; };
+		7D6E8CCA31324B1E8FFF6583 /* chessapp-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "chessapp-Bridging-Header.h"; path = "chessapp/chessapp-Bridging-Header.h"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = chessapp/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		E01558662BAEEBAD00B21C22 /* ChesspiecesModel.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = ChesspiecesModel.mlpackage; sourceTree = "<group>"; };
-		E04C996F2BB0360A006B91C9 /* ChesssegModel.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = ChesssegModel.mlpackage; sourceTree = "<group>"; };
+		E0361C312BB98A8B00214BEC /* ChesssegModel.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = ChesssegModel.mlpackage; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-chessapp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -54,8 +52,7 @@
 		13B07FAE1A68108700A75B9A /* chessapp */ = {
 			isa = PBXGroup;
 			children = (
-				E04C996F2BB0360A006B91C9 /* ChesssegModel.mlpackage */,
-				E01558662BAEEBAD00B21C22 /* ChesspiecesModel.mlpackage */,
+				E0361C312BB98A8B00214BEC /* ChesssegModel.mlpackage */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -63,8 +60,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				2E7D04ED035B4732AF2C3CF4 /* noop-file.swift */,
-				4601C147C3974EDF88FF534F /* chessapp-Bridging-Header.h */,
+				76200993B6E4470B88215B3D /* noop-file.swift */,
+				7D6E8CCA31324B1E8FFF6583 /* chessapp-Bridging-Header.h */,
 			);
 			name = chessapp;
 			sourceTree = "<group>";
@@ -151,13 +148,13 @@
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
-				22F87C1CB3C288EE332E1807 /* [Expo] Configure project */,
+				EA021D40539C3D75AE7B2116 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				90030196ADCF1F2F19D7FE9D /* [CP] Embed Pods Frameworks */,
+				946AB15D37CB45ED89C624C2 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -249,25 +246,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		22F87C1CB3C288EE332E1807 /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-chessapp/expo-configure-project.sh\"\n";
-		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -288,7 +266,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-chessapp/Pods-chessapp-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		90030196ADCF1F2F19D7FE9D /* [CP] Embed Pods Frameworks */ = {
+		946AB15D37CB45ED89C624C2 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -305,6 +283,25 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-chessapp/Pods-chessapp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		EA021D40539C3D75AE7B2116 /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-chessapp/expo-configure-project.sh\"\n";
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -334,10 +331,9 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				E0361C322BB98A8B00214BEC /* ChesssegModel.mlpackage in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				6CB17B809B7646D1AA7AAB32 /* noop-file.swift in Sources */,
-				E04C99702BB0360A006B91C9 /* ChesssegModel.mlpackage in Sources */,
-				E01558672BAEEBAD00B21C22 /* ChesspiecesModel.mlpackage in Sources */,
+				3F6F4E811B994EA0A6E0A2BA /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -352,6 +348,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = chessapp/chessapp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9V4585DLT7;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -370,7 +367,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.chessapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.abhiram.chesslysis;
 				PRODUCT_NAME = chessapp;
 				SWIFT_OBJC_BRIDGING_HEADER = "chessapp/chessapp-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -388,6 +385,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = chessapp/chessapp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9V4585DLT7;
 				INFOPLIST_FILE = chessapp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -401,7 +399,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.chessapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.abhiram.chesslysis;
 				PRODUCT_NAME = chessapp;
 				SWIFT_OBJC_BRIDGING_HEADER = "chessapp/chessapp-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -459,7 +457,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -524,7 +522,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",

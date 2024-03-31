@@ -52,12 +52,6 @@ PODS:
   - libevent (2.1.12)
   - MlModule (1.0.0):
     - ExpoModulesCore
-  - onnxruntime-c (1.17.0)
-  - onnxruntime-extensions-c (0.10.0)
-  - onnxruntime-react-native (1.16.3):
-    - onnxruntime-c
-    - onnxruntime-extensions-c
-    - React-Core
   - RCT-Folly (2021.07.22.00):
     - boost
     - DoubleConversion
@@ -507,7 +501,6 @@ DEPENDENCIES:
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - libevent (~> 2.1.12)
   - MlModule (from `../modules/ml-module/ios`)
-  - onnxruntime-react-native (from `../node_modules/onnxruntime-react-native`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -551,8 +544,6 @@ SPEC REPOS:
   trunk:
     - fmt
     - libevent
-    - onnxruntime-c
-    - onnxruntime-extensions-c
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -599,8 +590,6 @@ EXTERNAL SOURCES:
     :tag: hermes-2023-08-07-RNv0.72.4-813b2def12bc9df02654b3e3653ae4a68d0572e0
   MlModule:
     :path: "../modules/ml-module/ios"
-  onnxruntime-react-native:
-    :path: "../node_modules/onnxruntime-react-native"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
@@ -700,9 +689,6 @@ SPEC CHECKSUMS:
   hermes-engine: 8057e75cfc1437b178ac86c8654b24e7fead7f60
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   MlModule: 93cdc452ae28c28a835523fe69df83fbab07c5ea
-  onnxruntime-c: f5350dc5e5c4a25d0b2887a7320b8589db84431a
-  onnxruntime-extensions-c: d4fd904f70e26d385033a1634ebf7388e459dee6
-  onnxruntime-react-native: c045d6b34e451e7eff0d159f576ad92ef3249801
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: 28469809442eb4eb5528462705f7d852948c8a74
   RCTTypeSafety: e9c6c409fca2cc584e5b086862d562540cb38d29
@@ -742,6 +728,6 @@ SPEC CHECKSUMS:
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: b76f1acfda8212aa16b7e26bcce3983230c82603
 
-PODFILE CHECKSUM: 65fae236bda80b4a2dc21f64bdba21ec47ed9c86
+PODFILE CHECKSUM: f2147e2405a02b2e589932090cfb268b144f2303
 
 COCOAPODS: 1.14.3
