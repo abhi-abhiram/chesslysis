@@ -18,7 +18,7 @@ public class MlModule: Module {
     typealias LoadImageCallback = (Result<UIImage, Error>) -> Void
     
     var image:UIImage?
-    var detector = DetectPieces()
+//    var detector = DetectPieces()
     var segment = DetectBoard()
     
     public func definition() -> ModuleDefinition {
@@ -51,6 +51,7 @@ public class MlModule: Module {
     internal func predict(for url:URL) async throws -> String {
         
         let image = try await loadImage(atUrl: url)
+        
         guard let cgImage =  image.cgImage else {
             throw ImageLoadError.CGImageNotFound
         }
@@ -65,7 +66,7 @@ public class MlModule: Module {
         
         let result = mask?.resize(to: CGSize(width: cgImage.width, height: cgImage.height))
         
-        var inputImage = CIImage.init(cgImage: result!.cgImage!)
+        let inputImage = CIImage.init(cgImage: result!.cgImage!)
         
         let contourRequest = VNDetectContoursRequest.init()
         
@@ -94,8 +95,8 @@ public class MlModule: Module {
             }
         })
         
-        let boardContour = try largestContour?.polygonApproximation(epsilon: 0.1)
-    
+        var boardContour = try largestContour?.polygonApproximation(epsilon: 0.07)
+        
         return try await getImageUrl(for: drawContours(path: boardContour!.normalizedPath, sourceImage: cgImage))
     }
     

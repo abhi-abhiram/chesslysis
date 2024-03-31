@@ -5,6 +5,7 @@ import {
   Platform,
   StatusBar as StatusBarRN,
   Image,
+  Pressable,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native';
@@ -119,17 +120,37 @@ const Home = () => {
               </View>
             </>
           ) : (
-            <Image
-              source={{
-                uri: result,
-              }}
-              style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: 10,
-                top: 100,
-              }}
-            />
+            <>
+              <Image
+                source={{
+                  uri: result,
+                }}
+                style={{
+                  marginTop: 50,
+                  width: 350,
+                  height: 350,
+                  resizeMode: 'contain',
+                }}
+              />
+              <Pressable
+                style={{
+                  position: 'absolute',
+                  bottom: 20,
+                  width: 100,
+                  height: 100,
+                  backgroundColor: '#fff',
+                  borderRadius: 50,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                onPress={() => {
+                  setImage(null);
+                  setResult(null);
+                }}
+              >
+                <Text>Clear</Text>
+              </Pressable>
+            </>
           )}
         </View>
       </SafeAreaView>

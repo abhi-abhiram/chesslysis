@@ -15,7 +15,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.chessapp"
+      "bundleIdentifier": "com.abhiram.chesslysis"
     },
     "android": {
       "adaptiveIcon": {

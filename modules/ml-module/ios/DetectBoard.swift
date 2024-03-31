@@ -8,12 +8,14 @@
 import AVFoundation
 import Vision
 import CoreImage
+import onnxruntime_objc
+
 
 @available(iOS 15.0, *)
 internal class DetectBoard{
     var detectionRequest:VNCoreMLRequest!
     var ready = false
-    let confidenceThreshold:Float = 0.3
+    let confidenceThreshold:Float = 0.7
     let iouThreshold: Float = 0.6
     var maskThreshold: Float = 0.5
     
