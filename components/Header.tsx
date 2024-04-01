@@ -1,15 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import MenuIcon from '../SVG/MenuIcon';
+import { View, Text, StyleSheet } from 'react-native';
 
 export const Header = () => {
   return (
     <View style={styles.header}>
       <View>
-        <Text style={styles.title}>Chessvision.ai</Text>
+        <Text style={styles.title}>Chesslysis</Text>
         <Text style={styles.title2}>Chess position scanner</Text>
       </View>
-      <MenuIcon />
     </View>
   );
 };

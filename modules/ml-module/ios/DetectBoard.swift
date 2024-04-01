@@ -8,7 +8,6 @@
 import AVFoundation
 import Vision
 import CoreImage
-import onnxruntime_objc
 
 
 @available(iOS 15.0, *)
@@ -100,6 +99,17 @@ internal class DetectBoard{
         return maskPredictions
     }
     
+    
+    func detectAndProcess(image:UIImage)throws->[MaskPrediction] {
+        
+        guard let cgImage =  image.cgImage else {
+            throw ImageLoadError.CGImageNotFound
+        }
+        
+        let ciImage = CIImage(cgImage: cgImage)
+        
+        return detectAndProcess(image: ciImage)
+    }
     
     func detect(image:CIImage) -> [VNObservation]{
         

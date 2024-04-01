@@ -56,9 +56,11 @@ public class MlModule: Module {
             throw ImageLoadError.CGImageNotFound
         }
         
-        let ciImage = CIImage(cgImage: cgImage)
+        guard let gray_img = convertToGrayScale(image: image) else {
+            throw GrayScaleConversionException()
+        }
         
-        let obs = self.segment.detectAndProcess(image:ciImage)
+        let obs = try self.segment.detectAndProcess(image:gray_img)
         
         let board = obs[0]
         
@@ -95,9 +97,18 @@ public class MlModule: Module {
             }
         })
         
-        var boardContour = try largestContour?.polygonApproximation(epsilon: 0.07)
+        var boardContour = try largestContour?.polygonApproximation(epsilon: 0.1)
         
-        return try await getImageUrl(for: drawContours(path: boardContour!.normalizedPath, sourceImage: cgImage))
+        let ciImage = CIImage(cgImage: cgImage)
+        
+//        [308 503]
+//         [895 572]
+//         [940 216]
+//         [498 208]
+        
+        let transformed = perspectiveCorrection(inputImage: ciImage, topRight:CGPoint(x: 940, y: 216) , topLeft:  CGPoint(x: 498, y: 208), bottomRight: CGPoint(x: 895, y: 572), bottomLeft: CGPoint(x: 308, y: 503))
+        
+        return try await getImageUrl(for: UIImage(ciImage: transformed))
     }
     
     /**
@@ -232,5 +243,36 @@ public class MlModule: Module {
         perspectiveCorrectionFilter.bottomRight = bottomRight
         perspectiveCorrectionFilter.bottomLeft = bottomLeft
         return perspectiveCorrectionFilter.outputImage!
+    }
+    
+    func convertToGrayScale(image: UIImage) -> UIImage? {
+            let imageRect:CGRect = CGRect(x:0, y:0, width:image.size.width, height: image.size.height)
+            let colorSpace = CGColorSpaceCreateDeviceGray()
+            let width = image.size.width
+            let height = image.size.height
+            let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
+            let context = CGContext(data: nil, width: Int(width), height: Int(height), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
+            if let cgImg = image.cgImage {
+                context?.draw(cgImg, in: imageRect)
+                if let makeImg = context?.makeImage() {
+                    let imageRef = makeImg
+                    let newImage = UIImage(cgImage: imageRef)
+                    return newImage
+                }
+            }
+            return UIImage()
+        }
+    
+    
+    func normalizedToView(x_in:Float,y_in:Float,width:Int,height: Int) -> [Int]{
+        var x = x_in
+        var y = x_in
+        
+        x *=  1.0
+        y *= -1.0
+        x +=  1.0
+        y +=  1.0
+        
+        return [Int(x/2.0 * Float(width)), Int(y/2.0 * Float(height))]
     }
 }

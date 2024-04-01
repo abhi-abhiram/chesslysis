@@ -24,3 +24,9 @@ enum ImageLoadError:Error {
 enum PredictError:Error {
     case FileSystemNotFound
 }
+
+internal class GrayScaleConversionException:Exception{
+    override var reason: String {
+        "Failed to convert image to grayscale"
+    }
+}
