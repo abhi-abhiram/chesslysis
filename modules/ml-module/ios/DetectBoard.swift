@@ -10,22 +10,22 @@ import Vision
 import CoreImage
 
 
-@available(iOS 15.0, *)
+
 internal class DetectBoard{
     var detectionRequest:VNCoreMLRequest!
     var ready = false
     let confidenceThreshold:Float = 0.7
     let iouThreshold: Float = 0.6
-    var maskThreshold: Float = 0.5
+    var maskThreshold: Float = 0.4
     
-    init(){
-        Task { self.initDetection() }
+    init()throws{
+        Task { try self.initDetection() }
     }
     
-    func initDetection(){
+    func initDetection()throws{
         do {
             guard let modelUrl = Bundle.main.url(forResource: "ChesssegModel", withExtension: "mlmodelc") else {
-                throw ModelLoadFailedException()
+                throw DetectionError.FailedToLoadBoardSegModel
             }
             
             let configuration = MLModelConfiguration()
@@ -39,14 +39,14 @@ internal class DetectBoard{
             self.detectionRequest.imageCropAndScaleOption = .scaleFill
             
             self.ready = true
-        } catch let error {
-            fatalError("failed to setup model: \(error)")
+        } catch {
+            throw DetectionError.FailedToLoadBoardSegModel
         }
     }
     
-    func detectAndProcess(image:CIImage)-> [MaskPrediction]{
+    func detectAndProcess(image:CIImage)throws-> [MaskPrediction]{
         
-        let observations = self.detect(image: image)
+        let observations = try self.detect(image: image)
         
         let boxesOutput = observations[1] as! VNCoreMLFeatureValueObservation
         
@@ -101,17 +101,16 @@ internal class DetectBoard{
     
     
     func detectAndProcess(image:UIImage)throws->[MaskPrediction] {
-        
         guard let cgImage =  image.cgImage else {
             throw ImageLoadError.CGImageNotFound
         }
         
         let ciImage = CIImage(cgImage: cgImage)
         
-        return detectAndProcess(image: ciImage)
+        return try detectAndProcess(image: ciImage)
     }
     
-    func detect(image:CIImage) -> [VNObservation]{
+    func detect(image:CIImage)throws -> [VNObservation]{
         
         let handler = VNImageRequestHandler(ciImage: image)
         
@@ -121,8 +120,8 @@ internal class DetectBoard{
             
             return observations
             
-        }catch let error{
-            fatalError("failed to detect: \(error)")
+        }catch {
+            throw DetectionError.FailedToDetectBoard
         }
     }
     

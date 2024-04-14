@@ -3,30 +3,20 @@
 import CoreGraphics
 import ExpoModulesCore
 
-internal class ModelLoadFailedException:Exception {
-    override var reason: String {
-        "Failed to load model"
-    }
-}
-
-internal class ImageNotFoundException:Exception {
-    override var reason: String {
-        "Image is not Found"
-    }
-}
-
 enum ImageLoadError:Error {
     case NotFound
     case LoadingFailed
     case CGImageNotFound
+    case FailedToConvertGrayScale
 }
 
 enum PredictError:Error {
     case FileSystemNotFound
 }
 
-internal class GrayScaleConversionException:Exception{
-    override var reason: String {
-        "Failed to convert image to grayscale"
-    }
+enum DetectionError:Error {
+    case FailedToLoadBoardSegModel
+    case FailedToDetectBoard
+    case FailedToLoadPiecesObjModel
+    case FailedToDetectPieces
 }

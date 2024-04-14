@@ -52,6 +52,7 @@ PODS:
   - libevent (2.1.12)
   - MlModule (1.0.0):
     - ExpoModulesCore
+    - swift-algorithms
   - RCT-Folly (2021.07.22.00):
     - boost
     - DoubleConversion
@@ -476,6 +477,11 @@ PODS:
   - RNSVG (13.9.0):
     - React-Core
   - SocketRocket (0.6.1)
+  - swift-algorithms (1.0.0):
+    - swift-numerics-real
+  - swift-numerics-real (1.0.2):
+    - swift-numerics-shims
+  - swift-numerics-shims (1.0.2)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -545,6 +551,9 @@ SPEC REPOS:
     - fmt
     - libevent
     - SocketRocket
+    - swift-algorithms
+    - swift-numerics-real
+    - swift-numerics-shims
 
 EXTERNAL SOURCES:
   boost:
@@ -688,7 +697,7 @@ SPEC CHECKSUMS:
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: 8057e75cfc1437b178ac86c8654b24e7fead7f60
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  MlModule: 93cdc452ae28c28a835523fe69df83fbab07c5ea
+  MlModule: c76016ace7907216e18caaed9b8b261fd1b70507
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: 28469809442eb4eb5528462705f7d852948c8a74
   RCTTypeSafety: e9c6c409fca2cc584e5b086862d562540cb38d29
@@ -726,6 +735,9 @@ SPEC CHECKSUMS:
   RNScreens: 50ffe2fa2342eabb2d0afbe19f7c1af286bc7fb3
   RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
+  swift-algorithms: 75917094464fe5ace0de9e2b64fb2205a8ad2196
+  swift-numerics-real: ff7c73b16fc7993d8667c9cffc9b01a6a2ac8a16
+  swift-numerics-shims: 27661847e9d3a52ad620cc255da19333bdfe155c
   Yoga: b76f1acfda8212aa16b7e26bcce3983230c82603
 
 PODFILE CHECKSUM: 65fae236bda80b4a2dc21f64bdba21ec47ed9c86

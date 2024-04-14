@@ -9,21 +9,18 @@ import Photos
 import CoreGraphics
 import CoreImage
 import CoreImage.CIFilterBuiltins
+import Algorithms
 
-let DETECTION_COMPLETED_EVENT_NAME = "onDetectionComplete"
-
-
-@available(iOS 15.0, *)
 public class MlModule: Module {
     typealias LoadImageCallback = (Result<UIImage, Error>) -> Void
     
     var image:UIImage?
-//    var detector = DetectPieces()
-    var segment = DetectBoard()
+    //    var detector = DetectPieces()
+    var segment:DetectBoard?
+    
     
     public func definition() -> ModuleDefinition {
         Name("MlModule")
-        Events(DETECTION_COMPLETED_EVENT_NAME)
         
         AsyncFunction("predict") {
             (url:URL, promise:Promise)  in
@@ -31,18 +28,17 @@ public class MlModule: Module {
                 do {
                     let result = try await predict(for:url)
                     promise.resolve(result)
-                } catch let error as ImageLoadError {
-                    var msg:String
-                    switch (error) {
-                    case .LoadingFailed:
-                        msg = "Loading Failed"
-                    case .NotFound:
-                        msg = "Not Found"
-                    case .CGImageNotFound:
-                        msg = "CGIImage not Found"
-                    }
-                    promise.reject("ImageLoadError", msg)
+                } catch let error {
+                    promise.reject("Failed to Detect", error.localizedDescription)
                 }
+            }
+        }
+        
+        OnCreate {
+            do{
+                self.segment = try DetectBoard()
+            }catch let error {
+                NSLog("\(error)")
             }
         }
         
@@ -56,19 +52,54 @@ public class MlModule: Module {
             throw ImageLoadError.CGImageNotFound
         }
         
-        guard let gray_img = convertToGrayScale(image: image) else {
-            throw GrayScaleConversionException()
+        guard let gray_img = try Utils.convertToGrayScale(image: image) else {
+            throw ImageLoadError.FailedToConvertGrayScale
         }
         
-        let obs = try self.segment.detectAndProcess(image:gray_img)
+        guard let obs = try self.segment?.detectAndProcess(image:gray_img) else {
+            throw DetectionError.FailedToLoadBoardSegModel
+        }
+        
+        NSLog("Detection completed")
+        
+        if obs.count == 0 {
+            NSLog("No Board detected")
+            throw DetectionError.FailedToDetectBoard
+        }
         
         let board = obs[0]
         
         let mask = board.getMaskImage()
         
-        let result = mask?.resize(to: CGSize(width: cgImage.width, height: cgImage.height))
+        let thresholdFilter = CIFilter.colorThreshold()
+        let filter1 = CIFilter.morphologyRectangleMinimum()
+        let filter2 = CIFilter.morphologyRectangleMaximum()
         
-        let inputImage = CIImage.init(cgImage: result!.cgImage!)
+        filter1.width = 11
+        filter1.height = 11
+        filter2.width = 11
+        filter2.height = 11
+        
+        
+        let  filter3 = CIFilter.morphologyRectangleMaximum()
+        let filter4 = CIFilter.morphologyRectangleMinimum()
+        
+        filter3.width = 5
+        filter3.height = 5
+        filter4.width = 5
+        filter4.height = 5
+        
+        thresholdFilter.inputImage = CIImage.init(cgImage: mask!.cgImage!)
+        filter1.inputImage = thresholdFilter.outputImage
+        filter2.inputImage = filter1.outputImage
+        
+        
+        filter3.inputImage = filter2.outputImage
+        filter4.inputImage = filter3.outputImage
+        
+        let result =  UIImage(ciImage: filter4.outputImage!).resize(to: CGSize(width: cgImage.width, height: cgImage.height))
+        
+        let inputImage = CIImage.init(cgImage: result.cgImage!)
         
         let contourRequest = VNDetectContoursRequest.init()
         
@@ -80,15 +111,16 @@ public class MlModule: Module {
         
         let requestHandler = VNImageRequestHandler.init(ciImage: inputImage, options: [:])
         
-        try! requestHandler.perform([contourRequest])
+        try requestHandler.perform([contourRequest])
         
-        let contoursObservation = contourRequest.results?.first!
+        guard let contoursObservation = contourRequest.results?.first else {
+            throw DetectionError.FailedToDetectBoard
+        }
         
         var largestContour: VNContour?
         var largestArea: Double = 0
         
-    
-        try contoursObservation?.topLevelContours.first?.childContours.forEach({ contour in
+        try contoursObservation.topLevelContours.first?.childContours.forEach({ contour in
             var area:Double = 0
             try VNGeometryUtils.calculateArea(&area, for: contour, orientedArea: false)
             if (largestArea < area) {
@@ -97,18 +129,49 @@ public class MlModule: Module {
             }
         })
         
-        var boardContour = try largestContour?.polygonApproximation(epsilon: 0.1)
+        guard let boardContour = try largestContour?.polygonApproximation(epsilon: 0.01) else {
+            throw DetectionError.FailedToDetectBoard
+        }
         
-        let ciImage = CIImage(cgImage: cgImage)
+        let points = boardContour.normalizedPoints.map({ point in
+            return Utils.convertNormalizedToCartesian(normalizedPoint: CGPoint(x: CGFloat(point.x.magnitude) , y: CGFloat(point.y.magnitude)) , viewSize: image.size)
+        })
         
-//        [308 503]
-//         [895 572]
-//         [940 216]
-//         [498 208]
+        var maxArea = -1.0
         
-        let transformed = perspectiveCorrection(inputImage: ciImage, topRight:CGPoint(x: 940, y: 216) , topLeft:  CGPoint(x: 498, y: 208), bottomRight: CGPoint(x: 895, y: 572), bottomLeft: CGPoint(x: 308, y: 503))
+        var maxAreaPoints:[CGPoint]?
         
-        return try await getImageUrl(for: UIImage(ciImage: transformed))
+        
+        for var combo in points.combinations(ofCount: 4) {
+            combo.sort { p1, p2 in
+                return p1.y < p2.y
+            }
+            
+            if (combo[0].x > combo[1].x){
+                let temp = combo[0]
+                combo[0] = combo[1]
+                combo[1] = temp
+            }
+            
+            if (combo[2].x < combo[3].x){
+                let temp = combo[2]
+                combo[2] = combo[3]
+                combo[3] = temp
+            }
+            
+            let area = Utils.areaQuad(points: combo).magnitude
+            
+            if (maxArea < area) {
+                maxArea = area
+                maxAreaPoints = combo
+            }
+        }
+        
+        guard maxAreaPoints != nil else {
+            throw DetectionError.FailedToDetectBoard
+        }
+        
+        return try await getImageUrl(for: Utils.drawContours(path: boardContour.normalizedPath, sourceImage: cgImage))
     }
     
     /**
@@ -139,29 +202,6 @@ public class MlModule: Module {
         return image
     }
     
-    /**
-     Loads the image from user's photo library.
-     */
-    internal func loadImageFromPhotoLibrary(url: URL, callback: @escaping LoadImageCallback) {
-        guard let asset = PHAsset.fetchAssets(withALAssetURLs: [url], options: nil).firstObject else {
-            return callback(.failure(ImageNotFoundException()))
-        }
-        let size = CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
-        let options = PHImageRequestOptions()
-        
-        options.resizeMode = .exact
-        options.isNetworkAccessAllowed = true
-        options.isSynchronous = true
-        options.deliveryMode = .highQualityFormat
-        
-        PHImageManager.default().requestImage(for: asset, targetSize: size, contentMode: .aspectFit, options: options) { image, _ in
-            guard let image = image else {
-                return callback(.failure(ImageNotFoundException()))
-            }
-            return callback(.success(image))
-        }
-    }
-    
     internal func getImageUrl(for image:UIImage) async throws -> String{
         let data = image.jpegData(compressionQuality: 1.0)
         
@@ -178,101 +218,8 @@ public class MlModule: Module {
         
         let url = URL(fileURLWithPath: path)
         
-        
-        // TODO: Compelte image transfer
         try data?.write(to: url, options: [.atomic])
         
         return url.absoluteString
-    }
-    
-    
-    func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage? {
-        let size = image.size
-        
-        let widthRatio  = targetSize.width  / size.width
-        let heightRatio = targetSize.height / size.height
-        
-        // Figure out what our orientation is, and use that to form the rectangle
-        var newSize: CGSize
-        if(widthRatio > heightRatio) {
-            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
-        } else {
-            newSize = CGSize(width: size.width * widthRatio, height: size.height * widthRatio)
-        }
-        
-        // This is the rect that we've calculated out and this is what is actually used below
-        let rect = CGRect(origin: .zero, size: newSize)
-        
-        // Actually do the resizing to the rect using the ImageContext stuff
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
-        image.draw(in: rect)
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return newImage
-    }
-    
-    func drawContours(path:CGPath, sourceImage: CGImage) -> UIImage {
-            let size = CGSize(width: sourceImage.width, height: sourceImage.height)
-            let renderer = UIGraphicsImageRenderer(size: size)
-            
-            let renderedImage = renderer.image { (context) in
-            let renderingContext = context.cgContext
-
-            let flipVertical = CGAffineTransform(a: 1, b: 0, c: 0, d: -1, tx: 0, ty: size.height)
-            renderingContext.concatenate(flipVertical)
-
-            renderingContext.draw(sourceImage, in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
-            
-            renderingContext.scaleBy(x: size.width, y: size.height)
-            renderingContext.setLineWidth(5.0 / CGFloat(size.width))
-            let redUIColor = UIColor.red
-            renderingContext.setStrokeColor(redUIColor.cgColor)
-            renderingContext.addPath(path)
-            renderingContext.strokePath()
-            }
-            
-            return renderedImage
-        }
-    
-    func perspectiveCorrection(inputImage: CIImage,topRight:CGPoint, topLeft:CGPoint, bottomRight:CGPoint, bottomLeft:CGPoint) -> CIImage {
-        let perspectiveCorrectionFilter = CIFilter.perspectiveCorrection()
-        perspectiveCorrectionFilter.inputImage = inputImage
-        perspectiveCorrectionFilter.topRight = topRight
-        perspectiveCorrectionFilter.topLeft = topLeft
-        perspectiveCorrectionFilter.bottomRight = bottomRight
-        perspectiveCorrectionFilter.bottomLeft = bottomLeft
-        return perspectiveCorrectionFilter.outputImage!
-    }
-    
-    func convertToGrayScale(image: UIImage) -> UIImage? {
-            let imageRect:CGRect = CGRect(x:0, y:0, width:image.size.width, height: image.size.height)
-            let colorSpace = CGColorSpaceCreateDeviceGray()
-            let width = image.size.width
-            let height = image.size.height
-            let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
-            let context = CGContext(data: nil, width: Int(width), height: Int(height), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
-            if let cgImg = image.cgImage {
-                context?.draw(cgImg, in: imageRect)
-                if let makeImg = context?.makeImage() {
-                    let imageRef = makeImg
-                    let newImage = UIImage(cgImage: imageRef)
-                    return newImage
-                }
-            }
-            return UIImage()
-        }
-    
-    
-    func normalizedToView(x_in:Float,y_in:Float,width:Int,height: Int) -> [Int]{
-        var x = x_in
-        var y = x_in
-        
-        x *=  1.0
-        y *= -1.0
-        x +=  1.0
-        y +=  1.0
-        
-        return [Int(x/2.0 * Float(width)), Int(y/2.0 * Float(height))]
     }
 }

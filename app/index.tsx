@@ -13,15 +13,21 @@ const Home = () => {
   const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const router = useRouter();
+  const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     if (!image) return;
+    setLoading(true);
     predict(image.uri)
       .then((value) => {
         console.log(value);
         setResult(value);
+        setLoading(false);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
+      });
   }, [image]);
 
   const pickImageAsync = async (mode: 'camera' | 'gallery') => {
@@ -48,6 +54,21 @@ const Home = () => {
       setImage(null);
     }
   };
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#161A30',
+        }}
+      >
+        <Text style={{ color: '#fff' }}>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <>

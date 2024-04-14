@@ -2,20 +2,20 @@ import AVFoundation
 import Vision
 import CoreImage
 
-@available(iOS 15.0, *)
+
 internal class DetectPieces{
     var detectionRequest:VNCoreMLRequest!
     var ready = false
     
     init(){
-        Task { self.initDetection() }
+        Task { try self.initDetection() }
     }
     
-    func initDetection(){
+    func initDetection()throws{
         do {
             
             guard let modelUrl = Bundle.main.url(forResource: "ChesspiecesModel", withExtension: "mlmodelc") else {
-                throw ModelLoadFailedException()
+                throw DetectionError.FailedToLoadBoardSegModel
             }
             
             let configuration = MLModelConfiguration()
@@ -31,13 +31,14 @@ internal class DetectPieces{
             self.ready = true
             
         } catch let error {
-            fatalError("failed to setup model: \(error)")
+            NSLog("\(error)")
+            throw DetectionError.FailedToLoadPiecesObjModel
         }
     }
     
-    func detectAndProcess(image:CIImage)-> [ProcessedObservation]{
+    func detectAndProcess(image:CIImage)throws-> [ProcessedObservation]{
         
-        let observations = self.detect(image: image)
+        let observations = try self.detect(image: image)
         
         let processedObservations = self.processObservation(observations: observations, viewSize: image.extent.size)
         
@@ -45,7 +46,7 @@ internal class DetectPieces{
     }
     
     
-    func detect(image:CIImage) -> [VNObservation]{
+    func detect(image:CIImage)throws-> [VNObservation]{
         
         let handler = VNImageRequestHandler(ciImage: image)
         
@@ -55,8 +56,8 @@ internal class DetectPieces{
             
             return observations
             
-        }catch let error{
-            fatalError("failed to detect: \(error)")
+        }catch{
+            throw DetectionError.FailedToDetectPieces
         }
         
     }
