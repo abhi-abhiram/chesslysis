@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import EditIcon from '../../SVG/EditIcon';
 import StarIcon from '../../SVG/StartIcon';
+import { Dimensions } from 'react-native';
+import Piece from './piece';
+import * as ChessLib from 'chess.js';
 
 const BoardView = () => {
   return (
@@ -32,71 +35,81 @@ export default BoardView;
 const Letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
 const Board = () => {
-  const [board, setBoard] = useState<(string | null)[][]>(
-    Array(8).fill(Array(8).fill(null))
-  );
+  const [board, setBoard] = useState<
+    (ChessLib.PieceSymbol | Uppercase<ChessLib.PieceSymbol> | null)[][]
+  >(Array(8).fill(Array(8).fill(null)));
+
+  board[0] = ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'];
+  board[1] = ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'];
+  board[6] = ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'];
+  board[7] = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'];
+
+  const deviceWidth = Dimensions.get('window').width;
+  const width = getBoardWidth(deviceWidth);
 
   return (
     <View>
-      <BoardAplhas />
       <View
         style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          gap: 2,
+          gap: 10,
         }}
       >
-        <BoardNumbers />
         <View
           style={{
-            backgroundColor: '#6E614D',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            gap: 10,
           }}
         >
-          {board.map((row, rowIndex) => (
-            <View
-              key={rowIndex}
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              {row.map((_, index) => (
-                <View
-                  key={index}
-                  style={{
-                    width: 45.5,
-                    height: 45.5,
-                    backgroundColor:
-                      (index + rowIndex) % 2 === 0 ? '#FFF' : '#FFF',
-                    opacity: (index + rowIndex) % 2 === 0 ? 1 : 0.28,
-                  }}
-                ></View>
-              ))}
-            </View>
-          ))}
+          <BoardNumbers height={width} />
+          <View>
+            {board.map((row, rowIndex) => (
+              <View
+                key={rowIndex}
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                {row.map((name, index) => (
+                  <View
+                    key={index + rowIndex}
+                    style={{
+                      width: width,
+                      height: width,
+                      backgroundColor:
+                        (index + rowIndex) % 2 === 0 ? '#E8EDF9' : '#5369A2',
+                    }}
+                  >
+                    <Piece name={name} width={width} />
+                  </View>
+                ))}
+              </View>
+            ))}
+          </View>
         </View>
-        <BoardNumbers />
+        <BoardAplhas width={width} />
       </View>
-      <BoardAplhas />
     </View>
   );
 };
 
-const BoardAplhas = () => {
+const BoardAplhas = ({ width }: { width: number }) => {
   return (
     <View
       style={{
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        marginLeft: 15,
       }}
     >
       {Letters.map((letter, index) => (
         <View
           key={index}
           style={{
-            width: 45.5,
+            width: width,
             justifyContent: 'center',
             alignItems: 'center',
           }}
@@ -106,7 +119,6 @@ const BoardAplhas = () => {
               color: '#E6E6E6',
               fontSize: 10,
               fontWeight: '400',
-              height: 12.4,
             }}
           >
             {letter}
@@ -117,7 +129,7 @@ const BoardAplhas = () => {
   );
 };
 
-const BoardNumbers = () => {
+const BoardNumbers = ({ height }: { height: number }) => {
   return (
     <View>
       {Letters.map((_, index) => (
@@ -125,7 +137,7 @@ const BoardNumbers = () => {
           key={index}
           style={{
             justifyContent: 'center',
-            height: 45.5,
+            height,
           }}
         >
           <Text
@@ -175,3 +187,19 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
 });
+
+function getBoardWidth(deviceWidth: number) {
+  if (deviceWidth < 400) {
+    return 45.5;
+  }
+  if (deviceWidth < 600) {
+    return 50;
+  }
+  if (deviceWidth < 800) {
+    return 60;
+  }
+  if (deviceWidth < 1000) {
+    return 70;
+  }
+  return 80;
+}
