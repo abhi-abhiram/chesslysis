@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable, Alert } from 'react-native';
 import CameraIcon from '../SVG/CameraIcon';
 import GalleryIcon from '../SVG/GalleryIcon';
 import * as React from 'react';
@@ -6,27 +6,34 @@ import Button from './components/Button';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import { predict } from '../modules/ml-module';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Header } from '../components/Header';
+import { useDetectionResult } from './context/DetectionResultContext';
 
 const Home = () => {
   const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
-  const [result, setResult] = useState<string | null>(null);
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
+  const { setResult } = useDetectionResult();
 
   React.useEffect(() => {
     if (!image) return;
     setLoading(true);
-    predict(image.uri)
+    predict(image.uri, { verbose: true })
       .then((value) => {
-        console.log(value);
         setResult(value);
         setLoading(false);
+        setImage(null);
+        router.push('/board/');
       })
       .catch((error) => {
         console.error(error);
+        Alert.alert(
+          'Failed to Detect Chessboard',
+          'Please try again with a clearer image'
+        );
         setLoading(false);
+        setImage(null);
       });
   }, [image]);
 
@@ -74,118 +81,70 @@ const Home = () => {
     <>
       <Header />
       <View style={{ flex: 1, alignItems: 'center' }}>
-        {!result ? (
-          <>
-            <View style={{ top: 110 }}>
-              <Text
-                style={{
-                  color: '#fff',
-                  fontSize: 24,
-                  fontWeight: '500',
-                  width: 318,
-                  textAlign: 'center',
-                }}
-              >
-                Scan and analyze chess positions
-              </Text>
-              <Text
-                style={{
-                  color: '#fff',
-                  textAlign: 'center',
-                  fontWeight: '400',
-                  fontSize: 11,
-                  top: 10,
-                }}
-              >
-                from 2d sources
-              </Text>
-            </View>
-            <View
+        <View style={{ top: 110 }}>
+          <Text
+            style={{
+              color: '#fff',
+              fontSize: 24,
+              fontWeight: '500',
+              width: 318,
+              textAlign: 'center',
+            }}
+          >
+            Scan and analyze chess positions
+          </Text>
+          <Text
+            style={{
+              color: '#fff',
+              textAlign: 'center',
+              fontWeight: '400',
+              fontSize: 11,
+              top: 10,
+            }}
+          >
+            from 2d sources
+          </Text>
+        </View>
+        <View
+          style={{
+            top: 300,
+            width: 224,
+            flexDirection: 'column',
+            gap: 23,
+          }}
+        >
+          <Button
+            style={styles.button}
+            onPress={() => {
+              pickImageAsync('camera');
+            }}
+          >
+            <CameraIcon />
+            <Text
               style={{
-                top: 300,
-                width: 224,
-                flexDirection: 'column',
-                gap: 23,
+                color: '#161A30',
+                fontSize: 14,
+                fontWeight: '700',
+                textAlign: 'center',
               }}
             >
-              <Button
-                style={styles.button}
-                onPress={() => {
-                  pickImageAsync('camera');
-                }}
-              >
-                <CameraIcon />
-                <Text
-                  style={{
-                    color: '#161A30',
-                    fontSize: 14,
-                    fontWeight: '700',
-                    textAlign: 'center',
-                  }}
-                >
-                  Take a picture
-                </Text>
-              </Button>
-              <Button onPress={() => pickImageAsync('gallery')}>
-                <GalleryIcon />
-                <Text
-                  style={{
-                    color: '#161A30',
-                    fontSize: 14,
-                    fontWeight: '700',
-                    textAlign: 'center',
-                  }}
-                >
-                  Image from gallery
-                </Text>
-              </Button>
-              <Link href='/board/'>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontSize: 14,
-                    fontWeight: '700',
-                    textAlign: 'center',
-                  }}
-                >
-                  Go to board
-                </Text>
-              </Link>
-            </View>
-          </>
-        ) : (
-          <>
-            <Image
-              source={{
-                uri: result,
-              }}
+              Take a picture
+            </Text>
+          </Button>
+          <Button onPress={() => pickImageAsync('gallery')}>
+            <GalleryIcon />
+            <Text
               style={{
-                marginTop: 50,
-                width: 350,
-                height: 350,
-                resizeMode: 'contain',
-              }}
-            />
-            <Pressable
-              style={{
-                position: 'absolute',
-                bottom: 20,
-                width: 100,
-                height: 100,
-                backgroundColor: '#fff',
-                borderRadius: 50,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-              onPress={() => {
-                setImage(null);
-                setResult(null);
+                color: '#161A30',
+                fontSize: 14,
+                fontWeight: '700',
+                textAlign: 'center',
               }}
             >
-              <Text>Clear</Text>
-            </Pressable>
-          </>
-        )}
+              Image from gallery
+            </Text>
+          </Button>
+        </View>
       </View>
     </>
   );

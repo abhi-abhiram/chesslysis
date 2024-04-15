@@ -10,8 +10,18 @@ export function details(): string {
   return MlModule.details();
 }
 
-export async function predict(image: string): Promise<string> {
-  return await MlModule.predict(image);
+
+export type PredictOptions = {
+  verbose: boolean;
+}
+
+export type PredictResult = {
+  positions: string[][];
+  boardResult: string;
+}
+
+export async function predict(image: string, options: PredictOptions): Promise<PredictResult> {
+  return await MlModule.predict(image, options);
 }
 
 export { MlModuleViewProps, ChangeEventPayload };

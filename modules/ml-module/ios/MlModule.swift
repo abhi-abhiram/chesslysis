@@ -23,18 +23,6 @@ public class MlModule: Module {
     public func definition() -> ModuleDefinition {
         Name("MlModule")
         
-        AsyncFunction("predict") {
-            (url:URL, promise:Promise)  in
-            Task.init {
-                do {
-                    let result = try await predict(for:url)
-                    promise.resolve(result)
-                } catch let error {
-                    promise.reject("Failed to Detect", error.localizedDescription)
-                }
-            }
-        }
-        
         OnCreate {
             do{
                 self.segment = try DetectBoard()
@@ -42,10 +30,21 @@ public class MlModule: Module {
                 NSLog("\(error)")
             }
         }
-        
+
+        AsyncFunction("predict") {
+            (url:URL, options:Options, promise:Promise)  in
+            Task.init {
+                do {
+                    let result = try await predict(for:url,options: options)
+                    promise.resolve(result)
+                } catch let error {
+                    promise.reject("Failed to Detect", error.localizedDescription)
+                }
+            }
+        }
     }
     
-    internal func predict(for url:URL) async throws -> String {
+    internal func predict(for url:URL,options:Options) async throws -> DetectionResult {
         
         let image = try await loadImage(atUrl: url)
         
@@ -72,6 +71,7 @@ public class MlModule: Module {
         
         let mask = board.getMaskImage()
         
+//      Mask processing
         let thresholdFilter = CIFilter.colorThreshold()
         let filter1 = CIFilter.morphologyRectangleMinimum()
         let filter2 = CIFilter.morphologyRectangleMaximum()
@@ -98,9 +98,9 @@ public class MlModule: Module {
         filter3.inputImage = filter2.outputImage
         filter4.inputImage = filter3.outputImage
         
-        let result =  UIImage(ciImage: filter4.outputImage!).resize(to: CGSize(width: cgImage.width, height: cgImage.height))
+        let filterResult =  UIImage(ciImage: filter4.outputImage!).resize(to: CGSize(width: cgImage.width, height: cgImage.height))
         
-        let inputImage = CIImage.init(cgImage: result.cgImage!)
+        let inputImage = CIImage.init(cgImage: filterResult.cgImage!)
         
         let contourRequest = VNDetectContoursRequest.init()
         
@@ -176,8 +176,8 @@ public class MlModule: Module {
         
         let pieces = try piecesDetector.detectAndProcess(image: boardImage)
         
-        var positions = [[Character?]](repeating: [Character?](repeating: nil, count: 8), count: 8)
-
+        let result = DetectionResult()
+        
         pieces.forEach { p in
             let x = (p.boundingBox.minX + p.boundingBox.maxX)/2
             let y = (p.boundingBox.minY + p.boundingBox.maxY)/2
@@ -185,12 +185,15 @@ public class MlModule: Module {
             let i = Int(x / 80)
             let j = Int(y / 80)
             
-            positions[j][i] = Character(p.label)
+            result.positions[j][i] = p.label
         }
         
-//        let labeledImage = labeler.labelImage(image: UIImage(ciImage: boardImage), observations: pieces)!
+        if (options.verbose){
+            result.boardResult = try await getImageUrl(for: UIImage(ciImage: boardImage))
+            //        let labeledImage = labeler.labelImage(image: UIImage(ciImage: boardImage), observations: pieces)!
+        }
         
-        return try await getImageUrl(for: UIImage(ciImage:  boardImage))
+        return result
     }
     
     /**
@@ -241,4 +244,18 @@ public class MlModule: Module {
         
         return url.absoluteString
     }
+}
+
+
+struct DetectionResult:Record {
+    @Field
+    var positions:[[String?]] = [[String?]](repeating: [String?](repeating: nil, count: 8), count: 8)
+    
+    @Field
+    var boardResult:String? = nil
+}
+
+struct Options:Record {
+    @Field
+    var verbose:Bool = false
 }

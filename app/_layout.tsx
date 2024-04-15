@@ -10,6 +10,7 @@ import {
   StatusBar as StatusBarRN,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { DetectionResultProvider } from './context/DetectionResultContext';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -53,7 +54,9 @@ function RootLayoutNav() {
     <View style={{ flex: 1, backgroundColor: 'black' }}>
       <SafeAreaView style={styles.container}>
         <StatusBar style='light' />
-        <Slot />
+        <DetectionResultProvider>
+          <Slot />
+        </DetectionResultProvider>
       </SafeAreaView>
     </View>
   );

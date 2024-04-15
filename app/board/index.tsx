@@ -5,14 +5,41 @@ import StarIcon from '../../SVG/StartIcon';
 import { Dimensions } from 'react-native';
 import Piece from './piece';
 import * as ChessLib from 'chess.js';
+import { useDetectionResult } from '../context/DetectionResultContext';
+import { ChevronLeft } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 
 const BoardView = () => {
+  const router = useRouter();
   return (
     <View>
       <View style={styles.header}>
-        <View>
-          <Text style={styles.title}>Chesslysis</Text>
-          <Text style={styles.title2}>Chess position scanner</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: 10,
+          }}
+        >
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Pressable
+              onPress={() => {
+                router.push('/');
+              }}
+            >
+              <Text>
+                <ChevronLeft size={20} color='#fff' />
+              </Text>
+            </Pressable>
+          </View>
+          <View>
+            <Text style={styles.title}>Chesslysis</Text>
+            <Text style={styles.title2}>Chess position scanner</Text>
+          </View>
         </View>
         <View style={styles.groupBtn}>
           <Pressable>
@@ -26,6 +53,9 @@ const BoardView = () => {
       <View style={styles.boardContainer}>
         <Board />
       </View>
+      <View style={styles.header}>
+        <Text style={styles.title}>Detectoin Results</Text>
+      </View>
     </View>
   );
 };
@@ -34,18 +64,26 @@ export default BoardView;
 
 const Letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
-const Board = () => {
-  const [board, setBoard] = useState<
-    (ChessLib.PieceSymbol | Uppercase<ChessLib.PieceSymbol> | null)[][]
-  >(Array(8).fill(Array(8).fill(null)));
+type BoardPositions = (
+  | ChessLib.PieceSymbol
+  | Uppercase<ChessLib.PieceSymbol>
+  | null
+)[][];
 
-  board[0] = ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'];
-  board[1] = ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'];
-  board[6] = ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'];
-  board[7] = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'];
+const Board = () => {
+  const [board, setBoard] = useState<BoardPositions>(
+    Array(8).fill(Array(8).fill(null))
+  );
 
   const deviceWidth = Dimensions.get('window').width;
   const width = getBoardWidth(deviceWidth);
+  const { result } = useDetectionResult();
+
+  React.useEffect(() => {
+    if (!result) return;
+    const board = result.positions as BoardPositions;
+    setBoard(board);
+  }, [result]);
 
   return (
     <View>
