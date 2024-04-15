@@ -13,7 +13,7 @@ import {
   PawnW,
   QueenB,
   QueenW,
-} from '../../../assets/images';
+} from '../assets/images';
 import { Text } from 'react-native';
 
 type PieceProps = {

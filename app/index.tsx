@@ -2,13 +2,13 @@ import { StyleSheet, Text, View, Image, Pressable, Alert } from 'react-native';
 import CameraIcon from '../SVG/CameraIcon';
 import GalleryIcon from '../SVG/GalleryIcon';
 import * as React from 'react';
-import Button from './components/Button';
+import Button from '../components/Button';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import { predict } from '../modules/ml-module';
 import { useRouter } from 'expo-router';
 import { Header } from '../components/Header';
-import { useDetectionResult } from './context/DetectionResultContext';
+import { useDetectionResult } from '../context/DetectionResultContext';
 
 const Home = () => {
   const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);

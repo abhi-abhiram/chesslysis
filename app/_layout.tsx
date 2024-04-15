@@ -1,6 +1,6 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
-import { Slot, SplashScreen } from 'expo-router';
+import { SplashScreen } from 'expo-router';
 import { useEffect } from 'react';
 import {
   SafeAreaView,
@@ -10,7 +10,8 @@ import {
   StatusBar as StatusBarRN,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { DetectionResultProvider } from './context/DetectionResultContext';
+import { DetectionResultProvider } from '../context/DetectionResultContext';
+import { Stack } from 'expo-router';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -51,11 +52,45 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <View style={{ flex: 1, backgroundColor: 'black' }}>
+    <View style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
         <StatusBar style='light' />
         <DetectionResultProvider>
-          <Slot />
+          <Stack
+            screenOptions={{
+              contentStyle: {
+                backgroundColor: '#161A30',
+                flex: 1,
+              },
+            }}
+          >
+            <Stack.Screen
+              name='index'
+              options={{
+                headerShown: false,
+                headerTitle: 'Home',
+              }}
+            />
+            <Stack.Screen
+              name='board'
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name='board-result'
+              options={{
+                title: 'Detection Result',
+                presentation: 'modal',
+                headerTitleStyle: {
+                  color: 'white',
+                },
+                headerStyle: {
+                  backgroundColor: '#161A30',
+                },
+              }}
+            />
+          </Stack>
         </DetectionResultProvider>
       </SafeAreaView>
     </View>

@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import EditIcon from '../../SVG/EditIcon';
-import StarIcon from '../../SVG/StartIcon';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
+import EditIcon from '../SVG/EditIcon';
+import StarIcon from '../SVG/StartIcon';
 import { Dimensions } from 'react-native';
-import Piece from './piece';
+import Piece from '../components/Piece';
 import * as ChessLib from 'chess.js';
 import { useDetectionResult } from '../context/DetectionResultContext';
 import { ChevronLeft } from 'lucide-react-native';
@@ -30,10 +36,15 @@ const BoardView = () => {
               onPress={() => {
                 router.push('/');
               }}
+              style={({ pressed }) => [
+                {
+                  width: 24,
+                  height: 24,
+                  opacity: pressed ? 0.8 : 1,
+                },
+              ]}
             >
-              <Text>
-                <ChevronLeft size={20} color='#fff' />
-              </Text>
+              <ChevronLeft size={24} color='#fff' strokeWidth={2.5} />
             </Pressable>
           </View>
           <View>
@@ -54,7 +65,19 @@ const BoardView = () => {
         <Board />
       </View>
       <View style={styles.header}>
-        <Text style={styles.title}>Detectoin Results</Text>
+        <TouchableOpacity onPress={() => router.push('/board-result')}>
+          <Text
+            style={{
+              color: '#fff',
+              fontSize: 16,
+              fontWeight: '600',
+              padding: 10,
+              borderRadius: 5,
+            }}
+          >
+            Show Detection Results
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

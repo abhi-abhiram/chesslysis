@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PredictResult } from '../../modules/ml-module';
+import { PredictResult } from '../modules/ml-module';
 
 export type DetectionResultContextType = {
   result: PredictResult | null;
