@@ -15,8 +15,9 @@ public class MlModule: Module {
     typealias LoadImageCallback = (Result<UIImage, Error>) -> Void
     
     var image:UIImage?
-    //    var detector = DetectPieces()
+    let piecesDetector = DetectPieces()
     var segment:DetectBoard?
+//    let labeler = Labeling()
     
     
     public func definition() -> ModuleDefinition {
@@ -171,7 +172,25 @@ public class MlModule: Module {
             throw DetectionError.FailedToDetectBoard
         }
         
-        return try await getImageUrl(for: Utils.drawContours(path: boardContour.normalizedPath, sourceImage: cgImage))
+        let boardImage =  Utils.perspectiveCorrection(inputImage: CIImage(cgImage: cgImage), points: maxAreaPoints!)
+        
+        let pieces = try piecesDetector.detectAndProcess(image: boardImage)
+        
+        var positions = [[Character?]](repeating: [Character?](repeating: nil, count: 8), count: 8)
+
+        pieces.forEach { p in
+            let x = (p.boundingBox.minX + p.boundingBox.maxX)/2
+            let y = (p.boundingBox.minY + p.boundingBox.maxY)/2
+            
+            let i = Int(x / 80)
+            let j = Int(y / 80)
+            
+            positions[j][i] = Character(p.label)
+        }
+        
+//        let labeledImage = labeler.labelImage(image: UIImage(ciImage: boardImage), observations: pieces)!
+        
+        return try await getImageUrl(for: UIImage(ciImage:  boardImage))
     }
     
     /**

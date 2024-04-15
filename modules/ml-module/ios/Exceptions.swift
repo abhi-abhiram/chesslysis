@@ -8,6 +8,7 @@ enum ImageLoadError:Error {
     case LoadingFailed
     case CGImageNotFound
     case FailedToConvertGrayScale
+    case FailedToConvertCIImage
 }
 
 enum PredictError:Error {

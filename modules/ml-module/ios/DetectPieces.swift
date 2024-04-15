@@ -45,6 +45,13 @@ internal class DetectPieces{
         return processedObservations
     }
     
+    func detectAndProcess(image: UIImage)throws->[ProcessedObservation]{
+        
+        guard let ciImage = CIImage.init(image: image) else {
+            throw ImageLoadError.FailedToConvertCIImage
+        }
+        return try self.detectAndProcess(image: ciImage)
+    }
     
     func detect(image:CIImage)throws-> [VNObservation]{
         
@@ -70,14 +77,16 @@ internal class DetectPieces{
         for observation in observations where observation is VNRecognizedObjectObservation {
             
             let objectObservation = observation as! VNRecognizedObjectObservation
+                        
+            let rect = objectObservation.boundingBox
             
-            let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(viewSize.width), Int(viewSize.height))
+            let flippedBox = CGRect(x: rect.minX, y: 1 - rect.maxY, width: rect.width, height: rect.height)
             
-            let flippedBox = CGRect(x: objectBounds.minX, y: viewSize.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
-            
+            let box = VNImageRectForNormalizedRect(flippedBox, Int(640), Int(640))
+
             let label = objectObservation.labels.first!.identifier
             
-            let processedOD = ProcessedObservation(label: label, confidence: objectObservation.confidence, boundingBox: flippedBox)
+            let processedOD = ProcessedObservation(label: label, confidence: objectObservation.confidence, boundingBox: box)
             
             processedObservations.append(processedOD)
         }
