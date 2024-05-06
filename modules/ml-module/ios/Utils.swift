@@ -86,6 +86,30 @@ class Utils {
         
         return renderedImage
     }
+    
+    static func addPaddingToImg(for img:UIImage, padding: Int)-> CGImage?{
+        let paddingWidth = padding
+        let paddingHeight = padding
+        
+        let cgImage = img.cgImage!
+        
+        let newWidth = cgImage.width + paddingWidth * 2
+        let newHeight = cgImage.height + paddingHeight * 2
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
+        
+        let newContext = CGContext(data: nil, width: Int(newWidth), height: Int(newHeight), bitsPerComponent: 8, bytesPerRow:0, space: CGColorSpaceCreateDeviceGray(), bitmapInfo: bitmapInfo.rawValue)
+        
+        let rect = CGRect(x: 0, y: 0, width: Int(newWidth), height: Int(newHeight))
+        newContext?.setFillColor(gray: 0.5, alpha: 1.0)
+        newContext?.addRect(rect)
+        newContext?.drawPath(using: .fill)
+        newContext?.fill(rect)
+        
+        newContext?.translateBy(x: CGFloat(paddingWidth), y: CGFloat(paddingHeight))
+        newContext?.draw(cgImage, in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
+        
+        return newContext?.makeImage()
+    }
 }
 
 

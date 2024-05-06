@@ -1,6 +1,14 @@
 import * as React from 'react';
-import { View, Image, Text } from 'react-native';
+import { View, Image, Text, Button } from 'react-native';
 import { useDetectionResult } from '../context/DetectionResultContext';
+import * as MediaLibrary from 'expo-media-library';
+
+const requestMediaLibraryPermissions = async () => {
+  const { status } = await MediaLibrary.requestPermissionsAsync();
+  if (status !== 'granted') {
+    alert('Sorry, we need media library permissions to make this work!');
+  }
+};
 
 const BoardResult = () => {
   const { result } = useDetectionResult();

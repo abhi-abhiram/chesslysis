@@ -14,11 +14,8 @@ import Algorithms
 public class MlModule: Module {
     typealias LoadImageCallback = (Result<UIImage, Error>) -> Void
     
-    var image:UIImage?
-    let piecesDetector = DetectPieces()
+    var piecesDetector:DetectPieces?
     var segment:DetectBoard?
-//    let labeler = Labeling()
-    
     
     public func definition() -> ModuleDefinition {
         Name("MlModule")
@@ -26,11 +23,12 @@ public class MlModule: Module {
         OnCreate {
             do{
                 self.segment = try DetectBoard()
+                self.piecesDetector =  DetectPieces()
             }catch let error {
                 NSLog("\(error)")
             }
         }
-
+        
         AsyncFunction("predict") {
             (url:URL, options:Options, promise:Promise)  in
             Task.init {
@@ -46,15 +44,13 @@ public class MlModule: Module {
     
     internal func predict(for url:URL,options:Options) async throws -> DetectionResult {
         
-        let image = try await loadImage(atUrl: url)
-        
-        guard let cgImage =  image.cgImage else {
-            throw ImageLoadError.CGImageNotFound
-        }
-        
-        guard let gray_img = try Utils.convertToGrayScale(image: image) else {
+        let org_image = try await loadImage(atUrl: url)
+  
+        guard let gray_cgImage = Utils.addPaddingToImg(for: org_image, padding: 15) else {
             throw ImageLoadError.FailedToConvertGrayScale
         }
+        
+        let gray_img = UIImage(cgImage: gray_cgImage)
         
         guard let obs = try self.segment?.detectAndProcess(image:gray_img) else {
             throw DetectionError.FailedToLoadBoardSegModel
@@ -71,7 +67,7 @@ public class MlModule: Module {
         
         let mask = board.getMaskImage()
         
-//      Mask processing
+        //      Mask processing
         let thresholdFilter = CIFilter.colorThreshold()
         let filter1 = CIFilter.morphologyRectangleMinimum()
         let filter2 = CIFilter.morphologyRectangleMaximum()
@@ -98,7 +94,7 @@ public class MlModule: Module {
         filter3.inputImage = filter2.outputImage
         filter4.inputImage = filter3.outputImage
         
-        let filterResult =  UIImage(ciImage: filter4.outputImage!).resize(to: CGSize(width: cgImage.width, height: cgImage.height))
+        let filterResult =  UIImage(ciImage: filter4.outputImage!).resize(to: CGSize(width: gray_cgImage.width, height: gray_cgImage.height))
         
         let inputImage = CIImage.init(cgImage: filterResult.cgImage!)
         
@@ -135,7 +131,7 @@ public class MlModule: Module {
         }
         
         let points = boardContour.normalizedPoints.map({ point in
-            return Utils.convertNormalizedToCartesian(normalizedPoint: CGPoint(x: CGFloat(point.x.magnitude) , y: CGFloat(point.y.magnitude)) , viewSize: image.size)
+            return Utils.convertNormalizedToCartesian(normalizedPoint: CGPoint(x: CGFloat(point.x.magnitude) , y: CGFloat(point.y.magnitude)) , viewSize: gray_img.size)
         })
         
         var maxArea = -1.0
@@ -172,9 +168,11 @@ public class MlModule: Module {
             throw DetectionError.FailedToDetectBoard
         }
         
-        let boardImage =  Utils.perspectiveCorrection(inputImage: CIImage(cgImage: cgImage), points: maxAreaPoints!)
+        let boardImage =  Utils.perspectiveCorrection(inputImage: CIImage(cgImage: gray_img.cgImage!), points: maxAreaPoints!)
         
-        let pieces = try piecesDetector.detectAndProcess(image: boardImage)
+        guard let pieces = try piecesDetector?.detectAndProcess(image: boardImage) else {
+            throw DetectionError.FailedToDetectPieces
+        }
         
         let result = DetectionResult()
         
@@ -189,7 +187,9 @@ public class MlModule: Module {
         }
         
         if (options.verbose){
+            
             result.boardResult = try await getImageUrl(for: UIImage(ciImage: boardImage))
+//            result.boardResult = try await getImageUrl(for: gray_img)
             //        let labeledImage = labeler.labelImage(image: UIImage(ciImage: boardImage), observations: pieces)!
         }
         

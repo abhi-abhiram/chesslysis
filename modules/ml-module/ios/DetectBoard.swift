@@ -121,6 +121,7 @@ internal class DetectBoard{
             return observations
             
         }catch {
+            print(error)
             throw DetectionError.FailedToDetectBoard
         }
     }
