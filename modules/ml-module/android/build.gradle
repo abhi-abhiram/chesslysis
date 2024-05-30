@@ -80,6 +80,9 @@ android {
       withSourcesJar()
     }
   }
+  buildFeatures {
+    mlModelBinding true
+  }
 }
 
 repositories {
@@ -88,6 +91,10 @@ repositories {
 
 dependencies {
   implementation project(':expo-modules-core')
+  implementation project(':opencv')
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${getKotlinVersion()}"
-  implementation 'com.quickbirdstudios:opencv:3.4.15'
+  implementation 'org.tensorflow:tensorflow-lite-support:0.1.0'
+  implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
+  implementation 'org.tensorflow:tensorflow-lite-gpu:2.3.0'
+  implementation 'com.github.shiguruikai:combinatoricskt:1.6.0'
 }

@@ -85,7 +85,7 @@ const BoardView = () => {
 
 export default BoardView;
 
-const Letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+const Letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
 
 type BoardPositions = (
   | ChessLib.PieceSymbol
@@ -94,19 +94,33 @@ type BoardPositions = (
 )[][];
 
 const Board = () => {
-  const [board, setBoard] = useState<BoardPositions>(
-    Array(8).fill(Array(8).fill(null))
-  );
-
   const deviceWidth = Dimensions.get('window').width;
   const width = getBoardWidth(deviceWidth);
   const { result } = useDetectionResult();
+  const [selected, setSelected] = React.useState<[number, number] | null>(null);
+  const [game, setGame] = React.useState<ChessLib.Chess | null>(null);
+  const [moves, setMoves] = React.useState<ChessLib.Move[]>([]);
+  const [lastMove, setLastMove] = React.useState<ChessLib.Move | null>(null);
+
+  const positions = React.useMemo(() => game?.board(), [game, selected, moves]);
 
   React.useEffect(() => {
     if (!result) return;
     const board = result.positions as BoardPositions;
-    setBoard(board);
+    const game = new ChessLib.Chess(board_to_fen(board));
+    setGame(game);
   }, [result]);
+
+  React.useEffect(() => {
+    if (!game) return;
+    if (!selected) return;
+    const [x, y] = selected;
+    const moves = game.moves({
+      square: (Letters[x] + (8 - y)) as ChessLib.Square,
+      verbose: true,
+    });
+    setMoves(moves);
+  }, [selected]);
 
   return (
     <View>
@@ -124,7 +138,7 @@ const Board = () => {
         >
           <BoardNumbers height={width} />
           <View>
-            {board.map((row, rowIndex) => (
+            {positions?.map((row, rowIndex) => (
               <View
                 key={rowIndex}
                 style={{
@@ -133,8 +147,8 @@ const Board = () => {
                   alignItems: 'center',
                 }}
               >
-                {row.map((name, index) => (
-                  <View
+                {row.map((square, index) => (
+                  <Pressable
                     key={index + rowIndex}
                     style={{
                       width: width,
@@ -142,9 +156,115 @@ const Board = () => {
                       backgroundColor:
                         (index + rowIndex) % 2 === 0 ? '#E8EDF9' : '#5369A2',
                     }}
+                    onPress={() => {
+                      if (
+                        selected &&
+                        selected[0] === index &&
+                        selected[1] === rowIndex
+                      ) {
+                        return;
+                      } else if (
+                        selected &&
+                        moves.find(
+                          (move) => move.to === Letters[index] + (8 - rowIndex)
+                        )
+                      ) {
+                        setLastMove(
+                          game!.move({
+                            from: Letters[selected[0]] + (8 - selected[1]),
+                            to: Letters[index] + (8 - rowIndex),
+                          })
+                        );
+                        setSelected(null);
+                        setMoves([]);
+                      } else if (square) {
+                        setSelected([index, rowIndex]);
+                      }
+                    }}
                   >
-                    <Piece name={name} width={width} />
-                  </View>
+                    <View
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        backgroundColor: '#7B61FF',
+                        opacity:
+                          selected &&
+                          square !== null &&
+                          selected[0] === index &&
+                          selected[1] === rowIndex
+                            ? 0.5
+                            : 0,
+                        top: 0,
+                        left: 0,
+                        position: 'absolute',
+                      }}
+                    ></View>
+                    {moves.find(
+                      (move) => move.to === Letters[index] + (8 - rowIndex)
+                    ) && (
+                      <>
+                        <View
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            opacity: square ? 1 : 0,
+                            top: 0,
+                            left: 0,
+                            position: 'absolute',
+                            backgroundColor: '#7B61FF',
+                          }}
+                        >
+                          <View
+                            style={{
+                              width: '99%',
+                              height: '99%',
+                              backgroundColor:
+                                (index + rowIndex) % 2 === 0
+                                  ? '#E8EDF9'
+                                  : '#5369A2',
+                              borderRadius: 100,
+                            }}
+                          ></View>
+                        </View>
+                        {!square && (
+                          <View
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              top: 0,
+                              left: 0,
+                              position: 'absolute',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <View
+                              style={{
+                                width: 24,
+                                height: 24,
+                                borderRadius: 12,
+                                backgroundColor: '#7B61FF',
+                              }}
+                            ></View>
+                          </View>
+                        )}
+                      </>
+                    )}
+                    {square && (
+                      <Piece
+                        name={
+                          (square?.color === 'w'
+                            ? square.type.toUpperCase()
+                            : square.type) as ChessLib.PieceSymbol
+                        }
+                        width={width}
+                      />
+                    )}
+                  </Pressable>
                 ))}
               </View>
             ))}
@@ -263,4 +383,34 @@ function getBoardWidth(deviceWidth: number) {
     return 70;
   }
   return 80;
+}
+
+function board_to_fen(board: BoardPositions) {
+  let result = '';
+
+  for (let y = 0; y < board.length; y++) {
+    let empty = 0;
+    for (let x = 0; x < board[y].length; x++) {
+      let c = board[y][x]?.[0]; // Fixed
+      if (c) {
+        if (empty > 0) {
+          result += empty.toString();
+          empty = 0;
+        }
+        result += c;
+      } else {
+        empty += 1;
+      }
+    }
+    if (empty > 0) {
+      // Fixed
+      result += empty.toString();
+    }
+    if (y < board.length - 1) {
+      // Added to eliminate last '/'
+      result += '/';
+    }
+  }
+  result += ' w KQkq - 0 1';
+  return result;
 }
