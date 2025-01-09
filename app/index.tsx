@@ -38,7 +38,7 @@ const Home = () => {
   }, [image]);
 
   const pickImageAsync = async (mode: 'camera' | 'gallery') => {
-    let result: ImagePicker.ImagePickerResult;
+    let result: ImagePicker.ImagePickerResult | null = null;
 
     if (mode === 'camera') {
       const permission = await ImagePicker.requestCameraPermissionsAsync();
@@ -50,12 +50,24 @@ const Home = () => {
         quality: 1,
       });
     } else {
-      result = await ImagePicker.launchImageLibraryAsync({
-        quality: 1,
-      });
+      const permission = await ImagePicker.getMediaLibraryPermissionsAsync();
+
+      if (!permission.granted) {
+        if (permission.canAskAgain) {
+          const requestPermission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+          permission.granted = requestPermission.granted;
+        }
+      }
+
+      if (permission.granted) {
+        result = await ImagePicker.launchImageLibraryAsync({
+          selectionLimit: 1,
+          quality: 0.7
+        });
+      }
     }
 
-    if (!result.canceled) {
+    if (result && !result?.canceled) {
       setImage(result.assets[0]);
     } else {
       setImage(null);
@@ -131,7 +143,7 @@ const Home = () => {
               Take a picture
             </Text>
           </Button>
-          <Button onPress={() => pickImageAsync('gallery')}>
+          {/* <Button onPress={() => pickImageAsync('gallery')}>
             <GalleryIcon />
             <Text
               style={{
@@ -143,7 +155,7 @@ const Home = () => {
             >
               Image from gallery
             </Text>
-          </Button>
+          </Button> */}
         </View>
       </View>
     </>

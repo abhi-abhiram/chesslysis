@@ -11,8 +11,6 @@ import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import org.opencv.android.Utils
 import org.opencv.core.Mat
-import org.opencv.dnn.Dnn
-import org.opencv.dnn.Net
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -60,3 +58,4 @@ internal fun createOutputFile(cacheDir: File, extension: String): File {
         throw Exception("Nothing")
     }
 }
+

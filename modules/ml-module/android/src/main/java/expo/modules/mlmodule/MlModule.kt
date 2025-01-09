@@ -20,7 +20,6 @@ class MlModule : Module() {
   private lateinit var piecesDetector: PiecesDetector
   private lateinit var boardSeg: BoardSeg
 
-
   override fun definition() = ModuleDefinition {
 
     Name("MlModule")
@@ -34,37 +33,42 @@ class MlModule : Module() {
     }
 
     AsyncFunction("predict") Coroutine  { image: String, options: Options ->
-      val imageBitmap = loadImage(image,appContext)
 
+      val imageLoader = appContext.imageLoader ?:throw ImageLoaderNotFoundException()
+
+      val imageBitmap = imageLoader.loadImageForManipulationFromURL(image).get() ?: throw ImageNotFoundException()
 
       boardSeg.detectBoard(imageBitmap)
 
       val result = DetectionResult()
 
-//      result.boardResult = getImageUri(boardSeg.board,appContext.cacheDirectory)
+      result.boardResult = getImageUri(boardSeg.board,appContext.cacheDirectory)
 
-//      val boardBitmap = createBitmap(boardSeg.board.width(),boardSeg.board.height())
+      val boardBitmap = createBitmap(boardSeg.board.width(),boardSeg.board.height())
 
-//      Utils.matToBitmap(boardSeg.board,boardBitmap)
+      Utils.matToBitmap(boardSeg.board,boardBitmap)
 
-//      boardSeg.board.release()
+      boardSeg.board.release()
 
-//      val piecesResult = piecesDetector.detect(imageBitmap)
+      val piecesResult = piecesDetector.detect(boardBitmap)
 
-//      piecesResult?.forEach {
-//        val x = ((it.x1 + it.x2)/2) * 640
-//        val y = ((it.y1 + it.y2)/2) * 640
-//
-//        val i = (x/ 80).toInt()
-//        val j = (y/80).toInt()
-//
-//        result.positions[j][i] = it.clsName
-//      }
+      piecesResult?.forEach {
+        val x = ((it.x1 + it.x2)/2) * 640
+        val y = ((it.y1 + it.y2)/2) * 640
+
+        val i = (x/ 80).toInt()
+        val j = (y/80).toInt()
+
+        result.positions[j][i] = it.clsName
+      }
 
       return@Coroutine result
     }
   }
 }
+
+class ImageNotFoundException(message:String? = null):Exception(message)
+class ImageLoaderNotFoundException():Exception()
 
 class Options : Record {
   @Field

@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Pressable,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import EditIcon from '../SVG/EditIcon';
 import StarIcon from '../SVG/StartIcon';
@@ -103,12 +104,22 @@ const Board = () => {
   const [lastMove, setLastMove] = React.useState<ChessLib.Move | null>(null);
 
   const positions = React.useMemo(() => game?.board(), [game, selected, moves]);
+  const router = useRouter();
 
   React.useEffect(() => {
     if (!result) return;
-    const board = result.positions as BoardPositions;
-    const game = new ChessLib.Chess(board_to_fen(board));
-    setGame(game);
+    try {
+
+      const board = result.positions as BoardPositions;
+      const game = new ChessLib.Chess(board_to_fen(board));
+      setGame(game);
+    } catch (error) {
+      Alert.alert(
+        'Failed to Detect Chessboard',
+        'Please try again with a clearer image'
+      );
+      router.push('/');
+    }
   }, [result]);
 
   React.useEffect(() => {
@@ -191,9 +202,9 @@ const Board = () => {
                         backgroundColor: '#7B61FF',
                         opacity:
                           selected &&
-                          square !== null &&
-                          selected[0] === index &&
-                          selected[1] === rowIndex
+                            square !== null &&
+                            selected[0] === index &&
+                            selected[1] === rowIndex
                             ? 0.5
                             : 0,
                         top: 0,
@@ -204,56 +215,56 @@ const Board = () => {
                     {moves.find(
                       (move) => move.to === Letters[index] + (8 - rowIndex)
                     ) && (
-                      <>
-                        <View
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            opacity: square ? 1 : 0,
-                            top: 0,
-                            left: 0,
-                            position: 'absolute',
-                            backgroundColor: '#7B61FF',
-                          }}
-                        >
-                          <View
-                            style={{
-                              width: '99%',
-                              height: '99%',
-                              backgroundColor:
-                                (index + rowIndex) % 2 === 0
-                                  ? '#E8EDF9'
-                                  : '#5369A2',
-                              borderRadius: 100,
-                            }}
-                          ></View>
-                        </View>
-                        {!square && (
+                        <>
                           <View
                             style={{
                               width: '100%',
                               height: '100%',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              opacity: square ? 1 : 0,
                               top: 0,
                               left: 0,
                               position: 'absolute',
-                              alignItems: 'center',
-                              justifyContent: 'center',
+                              backgroundColor: '#7B61FF',
                             }}
                           >
                             <View
                               style={{
-                                width: 24,
-                                height: 24,
-                                borderRadius: 12,
-                                backgroundColor: '#7B61FF',
+                                width: '99%',
+                                height: '99%',
+                                backgroundColor:
+                                  (index + rowIndex) % 2 === 0
+                                    ? '#E8EDF9'
+                                    : '#5369A2',
+                                borderRadius: 100,
                               }}
                             ></View>
                           </View>
-                        )}
-                      </>
-                    )}
+                          {!square && (
+                            <View
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                top: 0,
+                                left: 0,
+                                position: 'absolute',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                            >
+                              <View
+                                style={{
+                                  width: 24,
+                                  height: 24,
+                                  borderRadius: 12,
+                                  backgroundColor: '#7B61FF',
+                                }}
+                              ></View>
+                            </View>
+                          )}
+                        </>
+                      )}
                     {square && (
                       <Piece
                         name={
